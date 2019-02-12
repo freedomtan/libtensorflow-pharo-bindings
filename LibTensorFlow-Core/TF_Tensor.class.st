@@ -229,6 +229,8 @@ TF_Tensor class >> rankOf: aMultidimensionalArray [
 
 { #category : #types }
 TF_Tensor class >> setterBlockFor: type [
+	TF_Tensor typeQInt8 = type
+		ifTrue: [ ^ [ :data :offset :value | data unsignedByteAt: offset put: value ] ].
 	TF_Tensor typeUInt8 = type
 		ifTrue: [ ^ [ :data :offset :value | data unsignedByteAt: offset put: value ] ].
 	TF_Tensor typeInt32 = type
@@ -240,7 +242,7 @@ TF_Tensor class >> setterBlockFor: type [
 	TF_Tensor typeDouble = type
 		ifTrue: [ ^ [ :data :offset :value | data doubleAt: offset put: value ] ].
 	TF_Tensor typeBoolean = type
-		ifTrue: [ ^ [ :data :offset :value | data booleanAt: offset put: value ] ].
+		ifTrue: [ ^ [ :data :offset :value | data booleanAt: offset put: value ] ].		
 	^ self shouldBeImplemented
 ]
 
@@ -263,6 +265,8 @@ TF_Tensor class >> sizeForType: anInteger [
 	self typeUInt8 = anInteger ifTrue: [^1].
 	self typeDouble = anInteger ifTrue: [^8].
 	self typeBoolean = anInteger ifTrue: [^1].
+	self typeUInt8 = anInteger ifTrue: [^1].
+	self typeQInt8 = anInteger ifTrue: [^1].
 
 "
 8

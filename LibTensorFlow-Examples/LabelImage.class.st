@@ -189,6 +189,33 @@ LabelImage >> prepareImageInput [
 ]
 
 { #category : #preparation }
+LabelImage >> prepareQuantImageInput [
+	| scaledImage b1 b2 b3 array2D |
+	scaledImage := (ImageReadWriter formFromFileNamed: '/tmp/grace_hopper.jpg') scaledIntoFormOfSize: imageSize.
+	
+	"bitmasks for R, G, and B"
+	b1 := scaledImage rgbaBitMasks at: 1.
+	b2 := scaledImage rgbaBitMasks at: 2.
+	b3 := scaledImage rgbaBitMasks at: 3.
+
+	array2D := Array2D new: imageSize.
+	1 to: imageSize do: [:x|
+		1 to: imageSize do: [:y|
+			| p a |
+			p := scaledImage pixelValueAt: x@y.
+			a := Array 
+				with: ((p & b1) bitShift: -16)
+				with: ((p & b2) bitShift: -8)
+				with: (p & b3)			
+			.
+			array2D at: y at: x put: a.
+	 	]
+	].
+
+	inputValues := TF_Tensor fromNumbers: array2D type: (TF_Tensor typeQInt8) shape: (Array with: 1 with: imageSize with: imageSize with: 3).
+]
+
+{ #category : #preparation }
 LabelImage >> prepareSession [
 	graph := TF_Graph fromBinaryFileNamed: graphFile.
 	session := TF_Session on: graph.
