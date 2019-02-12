@@ -1,3 +1,34 @@
+"
+capi := TensorFlowLiteCAPI current.
+model := capi newModelFromFile: '/tmp/mobilenet_v1_1.0_224_quant.tflite'.
+options := capi newInterpreterOptions.
+interpreter := capi newInterpreter: model options: options.
+capi interpreterAllocateTensors: interpreter.
+
+inputTensor := capi interpreterGetInputTensor: interpreter index: 0.
+outputTensor := capi interpreterGetOutputTensor: interpreter index: 0.
+Transcript clear.
+Transcript show: (capi tensorName: inputTensor);cr.
+Transcript show: (capi tensorName: outputTensor);cr.
+labelImage := LabelImage new prepareQuantImageInput.
+data := labelImage inputValues data.
+dataSize := labelImage inputValues size * labelImage inputValues elementSize.
+
+capi tensorCopyFromBuffer: inputTensor buffer: data size: dataSize.
+capi interpreterInvoke: interpreter.
+outputTensor := capi interpreterGetOutputTensor: interpreter index: 0.
+Transcript clear.
+Transcript show: 'input size: '; show: (capi tensorByteSize: inputTensor); cr.
+Transcript show: 'output size: '; show: (capi tensorByteSize: outputTensor); cr.
+
+outputBuffer := capi malloc: 1001.
+capi tensorCopyToBuffer: outputTensor buffer: outputBuffer size: 1001.
+outputBuffer getHandle byteAt: 1.
+outputBuffer getHandle byteAt: 100.
+1 to: 1001 do: [ :x|
+	Transcript show: x; show: ': '; show: (outputBuffer getHandle byteAt: x); cr.
+	]
+"
 Class {
 	#name : #TensorFlowLiteCAPI,
 	#superclass : #FFILibrary,
