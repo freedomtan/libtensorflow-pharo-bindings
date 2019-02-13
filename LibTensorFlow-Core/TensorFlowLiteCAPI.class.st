@@ -1,15 +1,9 @@
 "
-capi := TensorFlowLiteCAPI current.
-model := capi newModelFromFile: '/tmp/mobilenet_v1_1.0_224_quant.tflite'.
-options := capi newInterpreterOptions.
-interpreter := capi newInterpreter: model options: options.
-capi interpreterAllocateTensors: interpreter.
-
 inputTensor := capi interpreterGetInputTensor: interpreter index: 0.
 outputTensor := capi interpreterGetOutputTensor: interpreter index: 0.
 Transcript clear.
-Transcript show: (capi tensorName: inputTensor);cr.
-Transcript show: (capi tensorName: outputTensor);cr.
+Transcript show: 'input tensor: '; show: (capi tensorName: inputTensor);cr.
+Transcript show: 'output tensor: '; show: (capi tensorName: outputTensor);cr.
 labelImage := LabelImage new prepareQuantImageInput.
 data := labelImage inputValues data.
 dataSize := labelImage inputValues size * labelImage inputValues elementSize.
@@ -17,17 +11,21 @@ dataSize := labelImage inputValues size * labelImage inputValues elementSize.
 capi tensorCopyFromBuffer: inputTensor buffer: data size: dataSize.
 capi interpreterInvoke: interpreter.
 outputTensor := capi interpreterGetOutputTensor: interpreter index: 0.
-Transcript clear.
 Transcript show: 'input size: '; show: (capi tensorByteSize: inputTensor); cr.
 Transcript show: 'output size: '; show: (capi tensorByteSize: outputTensor); cr.
 
 outputBuffer := capi malloc: 1001.
 capi tensorCopyToBuffer: outputTensor buffer: outputBuffer size: 1001.
-outputBuffer getHandle byteAt: 1.
-outputBuffer getHandle byteAt: 100.
+
+labels := '/tmp/labels.txt' asFileReference contents lines.
+kv := Array new: 1001.
 1 to: 1001 do: [ :x|
-	Transcript show: x; show: ': '; show: (outputBuffer getHandle byteAt: x); cr.
-	]
+	kv at: x put: (Array with: (labels at: x) with: (outputBuffer getHandle byteAt: x)/255.0).
+].
+
+top_5 := (kv sort: [:k1 :k2 | (k1 at: 2) > (k2 at: 2)]) first: 5.
+top_5 do: [ :each|
+	Transcript show: each;cr].
 "
 Class {
 	#name : #TensorFlowLiteCAPI,
