@@ -1,7 +1,14 @@
 "
+|capi model options interpreter inputTensor outputTensor labelImage data dataSize outputBuffer labels kv top_5|
+capi := TensorFlowLiteCAPI current.
+model := capi newModelFromFile: '/tmp/mobilenet_v1_1.0_224_quant.tflite'.
+options := capi newInterpreterOptions.
+interpreter := capi newInterpreter: model options: options.
+capi interpreterAllocateTensors: interpreter.
+
 inputTensor := capi interpreterGetInputTensor: interpreter index: 0.
 outputTensor := capi interpreterGetOutputTensor: interpreter index: 0.
-Transcript clear.
+Transcript cr.
 Transcript show: 'input tensor: '; show: (capi tensorName: inputTensor);cr.
 Transcript show: 'output tensor: '; show: (capi tensorName: outputTensor);cr.
 labelImage := LabelImage new prepareQuantImageInput.
