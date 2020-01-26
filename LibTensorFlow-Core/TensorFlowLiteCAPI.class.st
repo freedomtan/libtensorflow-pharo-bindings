@@ -75,6 +75,12 @@ TensorFlowLiteCAPI >> interpreterAllocateTensors: interpreter [
 	^ self ffiCall: #(int TfLiteInterpreterAllocateTensors(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
+{ #category : #'instance creation' }
+TensorFlowLiteCAPI >> interpreterCreate: model options: options [
+	"TFL_CAPI_EXPORT extern TfLiteInterpreter* TfLiteInterpreterCreate(const TfLiteModel* model, const TfLiteInterpreterOptions* optional_options);"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterCreate(const ExternalAddress* model, const ExternalAddress* options)) module: TensorFlowLiteCAPI.
+]
+
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterGetInputTensor: interpreter index: i [
 	"TFL_CAPI_EXPORT extern TfLiteTensor* TfLiteInterpreterGetInputTensor(const TfLiteInterpreter* interpreter, int32_t input_index);"
@@ -107,6 +113,12 @@ TensorFlowLiteCAPI >> interpreterInvoke: interpreter [
 	^ self ffiCall: #(int TfLiteInterpreterInvoke(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
+{ #category : #'instance creation' }
+TensorFlowLiteCAPI >> interpreterOptionsCreate [
+	"TFL_CAPI_EXPORT extern TfLiteInterpreterOptions* TfLiteNewInterpreterOptions();"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterOptionsCreate(void)) module: TensorFlowLiteCAPI.
+]
+
 { #category : #options }
 TensorFlowLiteCAPI >> interpreterOptionsSetNumThreads: interpreter numberOfThreads: n [
 	"Sets the number of CPU threads to use for the interpreter.
@@ -125,24 +137,12 @@ TensorFlowLiteCAPI >> interpreterResizeInputTensor: interpreter index: i dims: d
 
 { #category : #'accessing platform' }
 TensorFlowLiteCAPI >> macModuleName [ 
-	^ '/usr/local/lib/libtensorflowlite_c.so'
+	^ '/usr/local/lib/libtensorflowlite_c.dylib'
 ]
 
 { #category : #'memory management' }
 TensorFlowLiteCAPI >> malloc: aNumber [
 	^ self ffiCall: #(void *malloc (int aNumber))
-]
-
-{ #category : #'instance creation' }
-TensorFlowLiteCAPI >> interpreterCreate: model options: options [
-	"TFL_CAPI_EXPORT extern TfLiteInterpreter* TfLiteInterpreterCreate(const TfLiteModel* model, const TfLiteInterpreterOptions* optional_options);"
-	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterCreate(const ExternalAddress* model, const ExternalAddress* options)) module: TensorFlowLiteCAPI.
-]
-
-{ #category : #'instance creation' }
-TensorFlowLiteCAPI >> interpreterOptionsCreate [
-	"TFL_CAPI_EXPORT extern TfLiteInterpreterOptions* TfLiteNewInterpreterOptions();"
-	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterOptionsCreate(void)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #'instance creation' }

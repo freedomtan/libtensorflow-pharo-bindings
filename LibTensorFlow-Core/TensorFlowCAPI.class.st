@@ -4,7 +4,7 @@ Class {
 	#classInstVars : [
 		'current'
 	],
-	#category : 'LibTensorFlow-Core'
+	#category : #'LibTensorFlow-Core'
 }
 
 { #category : #accessing }
@@ -412,7 +412,7 @@ TensorFlowCAPI >> importGraphDefInto: aTF_Graph from: aTF_Buffer options: aTF_Im
 
 { #category : #'accessing platform' }
 TensorFlowCAPI >> macModuleName [
-	^ '/usr/local/Cellar/libtensorflow/1.14.0/lib/libtensorflow.so'
+	^ '/usr/local/lib/libtensorflow.dylib'
 ]
 
 { #category : #status }

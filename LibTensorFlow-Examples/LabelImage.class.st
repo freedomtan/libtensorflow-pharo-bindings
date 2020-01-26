@@ -133,6 +133,11 @@ LabelImage >> inputStddev: aFloat [
 ]
 
 { #category : #accessing }
+LabelImage >> inputValues [
+	^ inputValues
+]
+
+{ #category : #accessing }
 LabelImage >> labelsFile [
 	^ labelsFile
 ]
