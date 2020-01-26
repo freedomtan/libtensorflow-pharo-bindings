@@ -1,9 +1,9 @@
 "
 |capi model options interpreter inputTensor outputTensor labelImage data dataSize outputBuffer labels kv top_5|
 capi := TensorFlowLiteCAPI current.
-model := capi newModelFromFile: '/tmp/mobilenet_v1_1.0_224_quant.tflite'.
-options := capi newInterpreterOptions.
-interpreter := capi newInterpreter: model options: options.
+model := capi modelCreateFromFile: '/tmp/mobilenet_v1_1.0_224_quant.tflite'.
+options := capi interpreterOptionsCreate.
+interpreter := capi interpreterCreate: model options: options.
 capi interpreterAllocateTensors: interpreter.
 
 inputTensor := capi interpreterGetInputTensor: interpreter index: 0.
@@ -50,77 +50,77 @@ TensorFlowLiteCAPI class >> current [
 
 { #category : #deleting }
 TensorFlowLiteCAPI >> deleteInterpreter: interpreter [
-	"TFL_CAPI_EXPORT extern void TFL_DeleteInterpreter(TFL_Interpreter* interpreter);"
-	^ self ffiCall: #(void TFL_DeleteInterpreter(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern void TfLiteDeleteInterpreter(TfLiteInterpreter* interpreter);"
+	^ self ffiCall: #(void TfLiteDeleteInterpreter(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #deleting }
 TensorFlowLiteCAPI >> deleteInterpreterOptions: options [
 	"Destroys the interpreter options instance.
-	TFL_CAPI_EXPORT extern void TFL_DeleteInterpreterOptions(TFL_InterpreterOptions* options);"
+	TFL_CAPI_EXPORT extern void TfLiteDeleteInterpreterOptions(TfLiteInterpreterOptions* options);"
 	
-	^ self ffiCall: #(void TFL_DeleteInterpreterOptions(ExternalAddress* options)) module: TensorFlowLiteCAPI.
+	^ self ffiCall: #(void TfLiteDeleteInterpreterOptions(ExternalAddress* options)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #deleting }
 TensorFlowLiteCAPI >> deleteModel: model [
 	"Destroys the model instance.
-	TFL_CAPI_EXPORT extern void TFL_DeleteModel(TFL_Model* model);"
-	^ self ffiCall: #(void TFL_DeleteModel(ExternalAddress* model)) module: TensorFlowLiteCAPI.
+	TFL_CAPI_EXPORT extern void TfLiteDeleteModel(TfLiteModel* model);"
+	^ self ffiCall: #(void TfLiteDeleteModel(ExternalAddress* model)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterAllocateTensors: interpreter [
-	"TFL_CAPI_EXPORT extern TFL_Status TFL_InterpreterAllocateTensors(TFL_Interpreter* interpreter);"
-	^ self ffiCall: #(int TFL_InterpreterAllocateTensors(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern TfLiteStatus TfLiteInterpreterAllocateTensors(TfLiteInterpreter* interpreter);"
+	^ self ffiCall: #(int TfLiteInterpreterAllocateTensors(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterGetInputTensor: interpreter index: i [
-	"TFL_CAPI_EXPORT extern TFL_Tensor* TFL_InterpreterGetInputTensor(const TFL_Interpreter* interpreter, int32_t input_index);"
-	^ self ffiCall: #(ExternalAddress* TFL_InterpreterGetInputTensor(const ExternalAddress* interpreter, int i)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern TfLiteTensor* TfLiteInterpreterGetInputTensor(const TfLiteInterpreter* interpreter, int32_t input_index);"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterGetInputTensor(const ExternalAddress* interpreter, int i)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterGetInputTensorCount: interpreter [
 	"Returns the number of input tensors associated with the model.
-	TFL_CAPI_EXPORT extern int TFL_InterpreterGetInputTensorCount(const TFL_Interpreter* interpreter);"
-	^ self ffiCall: #(int TFL_InterpreterGetInputTensorCounter(const ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
+	TFL_CAPI_EXPORT extern int TfLiteInterpreterGetInputTensorCount(const TfLiteInterpreter* interpreter);"
+	^ self ffiCall: #(int TfLiteInterpreterGetInputTensorCounter(const ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterGetOutputTensor: interpreter index: i [
-	"TFL_CAPI_EXPORT extern TFL_Tensor* TFL_InterpreterGetOutputTensor(const TFL_Interpreter* interpreter, int32_t input_index);"
-	^ self ffiCall: #(ExternalAddress* TFL_InterpreterGetOutputTensor(const ExternalAddress* interpreter, int i)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern TfLiteTensor* TfLiteInterpreterGetOutputTensor(const TfLiteInterpreter* interpreter, int32_t input_index);"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterGetOutputTensor(const ExternalAddress* interpreter, int i)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterGetOutputTensorCount: interpreter [
 	"Returns the number of input tensors associated with the model.
-	TFL_CAPI_EXPORT extern int TFL_InterpreterGetOutputTensorCount(const TFL_Interpreter* interpreter);"
-	^ self ffiCall: #(int TFL_InterpreterGetOutputTensorCounter(const ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
+	TFL_CAPI_EXPORT extern int TfLiteInterpreterGetOutputTensorCount(const TfLiteInterpreter* interpreter);"
+	^ self ffiCall: #(int TfLiteInterpreterGetOutputTensorCounter(const ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #invoking }
 TensorFlowLiteCAPI >> interpreterInvoke: interpreter [
-	"TFL_CAPI_EXPORT extern TFL_Status TFL_InterpreterInvoke(TFL_Interpreter* interpreter);"
-	^ self ffiCall: #(int TFL_InterpreterInvoke(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern TfLiteStatus TfLiteInterpreterInvoke(TfLiteInterpreter* interpreter);"
+	^ self ffiCall: #(int TfLiteInterpreterInvoke(ExternalAddress* interpreter)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #options }
 TensorFlowLiteCAPI >> interpreterOptionsSetNumThreads: interpreter numberOfThreads: n [
 	"Sets the number of CPU threads to use for the interpreter.
-	TFL_CAPI_EXPORT extern void TFL_InterpreterOptionsSetNumThreads(TFL_InterpreterOptions* options, int32_t num_threads)"
+	TFL_CAPI_EXPORT extern void TfLiteInterpreterOptionsSetNumThreads(TfLiteInterpreterOptions* options, int32_t num_threads)"
 	
 	^ self ffiCall: #(void FL_InterpreterOptionsSetNumThreads(const ExternalAddress* options, int n)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> interpreterResizeInputTensor: interpreter index: i dims: dims dimsSize: size [
-	"FL_CAPI_EXPORT extern TFL_Status TFL_InterpreterResizeInputTensor(
-    TFL_Interpreter* interpreter, int32_t input_index, const int* input_dims,
+	"FL_CAPI_EXPORT extern TfLiteStatus TfLiteInterpreterResizeInputTensor(
+    TfLiteInterpreter* interpreter, int32_t input_index, const int* input_dims,
     int32_t input_dims_size);"
-	^ self ffiCall: #(int TFL_InterpreterResizeInputTensor(ExternalAddress* interpreter, int32_t index, const int* dims, int32_t dimsSize)) module: TensorFlowLiteCAPI.
+	^ self ffiCall: #(int TfLiteInterpreterResizeInputTensor(ExternalAddress* interpreter, int32_t index, const int* dims, int32_t dimsSize)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #'accessing platform' }
@@ -134,47 +134,47 @@ TensorFlowLiteCAPI >> malloc: aNumber [
 ]
 
 { #category : #'instance creation' }
-TensorFlowLiteCAPI >> newInterpreter: model options: options [
-	"TFL_CAPI_EXPORT extern TFL_Interpreter* TFL_NewInterpreter(const TFL_Model* model, const TFL_InterpreterOptions* optional_options);"
-	^ self ffiCall: #(ExternalAddress* TFL_NewInterpreter(const ExternalAddress* model, const ExternalAddress* options)) module: TensorFlowLiteCAPI.
+TensorFlowLiteCAPI >> interpreterCreate: model options: options [
+	"TFL_CAPI_EXPORT extern TfLiteInterpreter* TfLiteInterpreterCreate(const TfLiteModel* model, const TfLiteInterpreterOptions* optional_options);"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterCreate(const ExternalAddress* model, const ExternalAddress* options)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #'instance creation' }
-TensorFlowLiteCAPI >> newInterpreterOptions [
-	"TFL_CAPI_EXPORT extern TFL_InterpreterOptions* TFL_NewInterpreterOptions();"
-	^ self ffiCall: #(ExternalAddress* TFL_NewInterpreterOptions(void)) module: TensorFlowLiteCAPI.
+TensorFlowLiteCAPI >> interpreterOptionsCreate [
+	"TFL_CAPI_EXPORT extern TfLiteInterpreterOptions* TfLiteNewInterpreterOptions();"
+	^ self ffiCall: #(ExternalAddress* TfLiteInterpreterOptionsCreate(void)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #'instance creation' }
-TensorFlowLiteCAPI >> newModelFromFile: model_path [
-	"TFL_CAPI_EXPORT extern TFL_Model* TFL_NewModelFromFile(const char* model_path)"
-	^ self ffiCall: #(ExternalAddress* TFL_NewModelFromFile(String model_path)) module: TensorFlowLiteCAPI.
+TensorFlowLiteCAPI >> modelCreateFromFile: model_path [
+	"TFL_CAPI_EXPORT extern TfLiteModel* TfLiteModelCreateFromFile(const char* model_path)"
+	^ self ffiCall: #(ExternalAddress* TfLiteModelCreateFromFile(String model_path)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> tensorByteSize: tensor [
-	"TFL_CAPI_EXPORT extern size_t TFL_TensorByteSize(const TFL_Tensor* tensor);"
-	^ self ffiCall: #(size_t TFL_TensorByteSize(const ExternalAddress* tensor)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern size_t TfLiteTensorByteSize(const TfLiteTensor* tensor);"
+	^ self ffiCall: #(size_t TfLiteTensorByteSize(const ExternalAddress* tensor)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #copying }
 TensorFlowLiteCAPI >> tensorCopyFromBuffer: tensor buffer: buffer size: size [
 	"TFL_CAPI_EXPORT extern 
-	 	TFL_Status TFL_TensorCopyFromBuffer(TFL_Tensor* tensor, const void* input_data, size_t input_data_size);"
-	^ self ffiCall: #(int TFL_TensorCopyFromBuffer(ExternalAddress* tensor, const void* buffer, size_t size)) module: TensorFlowLiteCAPI.
+	 	TfLiteStatus TfLiteTensorCopyFromBuffer(TfLiteTensor* tensor, const void* input_data, size_t input_data_size);"
+	^ self ffiCall: #(int TfLiteTensorCopyFromBuffer(ExternalAddress* tensor, const void* buffer, size_t size)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #copying }
 TensorFlowLiteCAPI >> tensorCopyToBuffer: tensor buffer: buffer size: size [
-	"TFL_CAPI_EXPORT extern TFL_Status TFL_TensorCopyToBuffer(const TFL_Tensor* output_tensor, void* output_data,
+	"TFL_CAPI_EXPORT extern TfLiteStatus TfLiteTensorCopyToBuffer(const TfLiteTensor* output_tensor, void* output_data,
     size_t output_data_size);"
-	^ self ffiCall: #(int TFL_TensorCopyToBuffer(const ExternalAddress* tensor, void* buffer, size_t size)) module: TensorFlowLiteCAPI.
+	^ self ffiCall: #(int TfLiteTensorCopyToBuffer(const ExternalAddress* tensor, void* buffer, size_t size)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #tensor }
 TensorFlowLiteCAPI >> tensorName: tensor [
-	"TFL_CAPI_EXPORT extern const char* TFL_TensorName(const TFL_Tensor* tensor);"
-	^ self ffiCall: #(String TFL_TensorName(const ExternalAddress* tensor)) module: TensorFlowLiteCAPI.
+	"TFL_CAPI_EXPORT extern const char* TfLiteTensorName(const TfLiteTensor* tensor);"
+	^ self ffiCall: #(String TfLiteTensorName(const ExternalAddress* tensor)) module: TensorFlowLiteCAPI.
 ]
 
 { #category : #'accessing platform' }
